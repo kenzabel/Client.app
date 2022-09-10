@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:interface_connection/providers/variable_provider.dart';
 import 'package:interface_connection/ui/homepage.dart';
@@ -6,6 +9,9 @@ import 'package:interface_connection/ui/qr_scan_screen.dart';
 import 'package:interface_connection/ui/show_profile.dart';
 import 'package:provider/provider.dart';
 import 'package:solid_auth/solid_auth.dart';
+
+import '../widgets/client_widgets.dart';
+import 'book_list.dart';
 
 class QRIntroScreen extends StatefulWidget {
   const QRIntroScreen({Key? key}) : super(key: key);
@@ -15,15 +21,16 @@ class QRIntroScreen extends StatefulWidget {
 }
 
 class _QRIntroScreenState extends State<QRIntroScreen> {
+  String? qrCode;
+  bool data = false;
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('BookMate'),
-        actions: [
-          _profileButton(),
-          _logoutButton(context)
-        ],
+        actions: [_profileButton(), _logoutButton(context)],
       ),
       body: Center(
         child: Column(
@@ -49,8 +56,9 @@ class _QRIntroScreenState extends State<QRIntroScreen> {
                   onPrimary: Colors.white,
                 ),
                 onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const QRScanScreen()));
+                  scanQRCode();
+                  // Navigator.of(context).push(MaterialPageRoute(
+                  //     builder: (context) => const QRScanScreen()));
                 },
                 child: const Icon(Icons.camera_alt)),
           ],
@@ -68,8 +76,9 @@ class _QRIntroScreenState extends State<QRIntroScreen> {
         icon: const Icon(Icons.account_circle));
   }
 
-  _logoutButton(BuildContext context){
-    VariableProvider provider = Provider.of<VariableProvider>(context, listen: false);
+  _logoutButton(BuildContext context) {
+    VariableProvider provider =
+        Provider.of<VariableProvider>(context, listen: false);
     String logoutUrl = provider.getAuthData['logoutUrl'];
     return IconButton(
         onPressed: () {
@@ -80,5 +89,43 @@ class _QRIntroScreenState extends State<QRIntroScreen> {
           );
         },
         icon: const Icon(Icons.logout));
+  }
+
+  Future<void> scanQRCode() async {
+    final barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+        "#ff6666", "Cancel", true, ScanMode.QR);
+
+    if (!mounted) return;
+    setState(() {
+      qrCode = barcodeScanRes;
+    });
+
+    setState(() {
+      isLoading = true;
+    });
+    isLoading
+        ? showDialogBox(context)
+        : Navigator.of(context, rootNavigator: true).pop('dialog');
+    Timer(const Duration(seconds: 5), () {
+      setState(() {
+        isLoading = false;
+      });
+
+      !isLoading
+          ? Navigator.of(context, rootNavigator: true).pop('dialog')
+          : showDialogBox(context);
+
+      if (qrCode == "library_one") {
+        print("Yay!");
+        Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const LibraryBooks()));
+      } else {
+        showError(context);
+      }
+    });
+
+    setState(() {
+      isLoading = false;
+    });
   }
 }

@@ -1,4 +1,3 @@
-
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -7,6 +6,7 @@ import 'package:interface_connection/providers/variable_provider.dart';
 import 'package:interface_connection/ui/login.dart';
 import 'package:interface_connection/ui/profile.dart';
 import 'package:interface_connection/ui/register.dart';
+import 'package:interface_connection/ui/scan_qr_code.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:provider/provider.dart';
 import 'package:solid_auth/solid_auth.dart';
@@ -99,7 +99,13 @@ class _HomePageState extends State<HomePage> {
   Widget _logo() {
     return Center(
       child: SizedBox(
-        child: Image.asset('images/book.jpg'),
+        child: GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const ScanQRCode()));
+          },
+          child: Image.asset('images/book.jpg'),
+        ),
         height: 80,
       ),
     );
@@ -138,19 +144,20 @@ class _HomePageState extends State<HomePage> {
           ];
 
           // Authentication process for the POD issuer
-          var authData = await authenticate(
-              Uri.parse(_issuerUri), _scopes, context);
+          var authData =
+              await authenticate(Uri.parse(_issuerUri), _scopes, context);
 
           // Decode access token to get the correct webId
           String accessToken = authData['accessToken'];
           Map<String, dynamic> decodedToken = JwtDecoder.decode(accessToken);
           String webId = decodedToken['webid'];
-          Provider.of<VariableProvider>(context, listen: false).updateUserWebID(webId);
-          Provider.of<VariableProvider>(context, listen: false).updateAuthData(authData);
+          Provider.of<VariableProvider>(context, listen: false)
+              .updateUserWebID(webId);
+          Provider.of<VariableProvider>(context, listen: false)
+              .updateAuthData(authData);
 
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => const ProfilePage()));
-
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const ProfilePage()));
         },
         child: Text("Se connecter",
             style: GoogleFonts.josefinSans(
