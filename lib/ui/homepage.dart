@@ -101,8 +101,8 @@ class _HomePageState extends State<HomePage> {
       child: SizedBox(
         child: GestureDetector(
           onTap: () {
-             Navigator.of(context).push(
-                 MaterialPageRoute(builder: (context) => const ScanQRCode()));
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const ScanQRCode()));
           },
           child: Image.asset('images/book.jpg'),
         ),

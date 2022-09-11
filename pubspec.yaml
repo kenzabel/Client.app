@@ -48,7 +48,7 @@ dependencies:
   solid_auth: ^0.1.5
   jwt_decoder: ^2.0.1
   shared_preferences: ^2.0.15
-  # flutter_rating_bar: 
+  flutter_rating_bar: ^4.0.1
 
 dev_dependencies:  
   flutter_test:

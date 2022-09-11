@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:interface_connection/ui/recommended.dart';
 
 import '../model/BooksData.dart';
 import '../widgets/client_widgets.dart';
@@ -17,14 +18,15 @@ class LibraryBooks extends StatefulWidget {
 class _LibraryBooksState extends State<LibraryBooks> {
   List<String> booksUri = [];
   List<BooksData> booksDataList = [];
+  List<dynamic> chk = [];
   Future<List<BooksData>> getBooksData() async {
     final String response = await rootBundle.loadString('assets/result.json');
     final data = await json.decode(response);
 
     for (Map i in data) {
       booksDataList.add(BooksData.fromJson(i));
+      chk.add({"isChecked": false});
     }
-    print(booksDataList[0].title);
     return booksDataList;
   }
 
@@ -36,6 +38,11 @@ class _LibraryBooksState extends State<LibraryBooks> {
         icon1: Icons.arrow_back_ios_new,
         route1: () => Navigator.of(context).pop(),
         title: "Scan QRCode",
+        icon2: Icons.book,
+        route2: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const RecommendedBooks()));
+        },
       ),
       body: FutureBuilder(
           future: getBooksData(),
@@ -50,6 +57,7 @@ class _LibraryBooksState extends State<LibraryBooks> {
                       String? bookName = booksDataList[index].title;
                       String? author = booksDataList[index].author;
                       String? description = booksDataList[index].abstract;
+                      bool? fav = booksDataList[index].isFavorite;
                       return InkWell(
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
@@ -90,15 +98,16 @@ class _LibraryBooksState extends State<LibraryBooks> {
                               ),
                               IconButton(
                                   onPressed: () {
-                                    setState(() {
-                                      bookName = "dsdsd";
-                                      isChecked = true;
-                                    });
+                                    chk[index]["isChecked"]
+                                        ? chk[index]["isChecked"] = false
+                                        : chk[index]["isChecked"] = true;
+                                    setState(() {});
                                   },
                                   icon: Icon(
                                     Icons.favorite,
-                                    color:
-                                        isChecked ? Colors.red : Colors.black,
+                                    color: chk[index]["isChecked"]
+                                        ? Colors.red
+                                        : Colors.grey,
                                   ))
                             ],
                           ),

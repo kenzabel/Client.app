@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 AppBar twoButtonsAppbar({
@@ -118,7 +119,7 @@ Widget detailCard({
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 0.0, top: 0),
+                padding: const EdgeInsets.all(0),
                 child: Container(
                   height: screenHeight(context) * 0.25,
                   width: screenWidth(context),
@@ -146,6 +147,22 @@ Widget detailCard({
                 ],
               ),
               const YMargin(7),
+              RatingBar.builder(
+                initialRating: 3,
+                minRating: 1,
+                direction: Axis.horizontal,
+                allowHalfRating: true,
+                itemCount: 5,
+                itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                itemBuilder: (context, _) => const Icon(
+                  Icons.star,
+                  color: Colors.amber,
+                ),
+                onRatingUpdate: (rating) {
+                  print(rating);
+                },
+              ),
+              Divider(),
               Padding(
                 padding: const EdgeInsets.all(0.0),
                 child: Container(
@@ -283,3 +300,60 @@ const kBackgroundColor = Color(0xFFEbf5f0);
 // Style for subTitle
 var mSubTitleStyle =
     GoogleFonts.inter(color: kTitleColor.withOpacity(0.6), fontSize: 12);
+
+Widget productCategory({
+  context,
+  String? img,
+  String? title,
+}) {
+  return Padding(
+    padding: const EdgeInsets.only(right: 10.0),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(8.0),
+      child: Stack(
+        children: <Widget>[
+          Image.asset(
+            img!,
+            fit: BoxFit.fill,
+            height: screenHeight(context) / 6,
+            width: screenWidth(context) * 0.6,
+          ),
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                // Add one stop for each color. Stops should increase from 0 to 1
+                stops: [0.2, 0.7],
+                colors: [
+                  Color.fromARGB(100, 0, 0, 0),
+                  Color.fromARGB(100, 0, 0, 0),
+                ],
+                // stops: [0.0, 0.1],
+              ),
+            ),
+            height: screenHeight(context) / 6,
+            width: screenWidth(context) * 0.6,
+          ),
+          Center(
+            child: Container(
+              width: screenWidth(context) * .6,
+              padding: const EdgeInsets.all(1),
+              child: Center(
+                child: Text(
+                  title!,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
