@@ -2,14 +2,17 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:interface_connection/providers/variable_provider.dart';
-import 'package:interface_connection/ui/login.dart';
-import 'package:interface_connection/ui/profile.dart';
-import 'package:interface_connection/ui/register.dart';
-import 'package:interface_connection/ui/scan_qr_code.dart';
+import '/feateure/access_sharedpref.dart';
+import '/providers/variable_provider.dart';
+import '/ui/profile.dart';
+import '/ui/register.dart';
+import '/ui/scan_qr_code.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:solid_auth/solid_auth.dart';
+
+import 'qr_intro.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -19,80 +22,84 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool loading = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: SizedBox(
-          child: Stack(
-            children: [
-              Positioned(
-                top: 200,
-                left: -100,
-                child: Container(
-                  width: 300,
-                  height: 300,
-                  decoration: const BoxDecoration(
-                    color: Color(0x304599ff),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(150),
+      body: loading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: SizedBox(
+                child: Stack(
+                  children: [
+                    Positioned(
+                      top: 200,
+                      left: -100,
+                      child: Container(
+                        width: 300,
+                        height: 300,
+                        decoration: const BoxDecoration(
+                          color: Color(0x304599ff),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(150),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 10,
-                right: -10,
-                child: Container(
-                  width: 200,
-                  height: 200,
-                  decoration: const BoxDecoration(
-                      color: Color(0x30cc33ff),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(100),
-                      )),
-                ),
-              ),
-              Positioned(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(
-                    sigmaX: 80,
-                    sigmaY: 80,
-                  ),
-                  child: Container(),
-                ),
-              ),
-              SizedBox(
-                  width: double.infinity,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40),
-                    child: Column(children: [
-                      const SizedBox(
-                        height: 50,
-                      ),
-                      _logo(),
-                      _loginLabel(),
-                      const SizedBox(
-                        height: 150,
-                      ),
-                      _loginBtn(context),
-                      const SizedBox(
+                    Positioned(
+                      bottom: 10,
+                      right: -10,
+                      child: Container(
+                        width: 200,
                         height: 200,
+                        decoration: const BoxDecoration(
+                            color: Color(0x30cc33ff),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(100),
+                            )),
                       ),
-                      _signUpLabel("Vous n'avez pas encore de compte Solid ?",
-                          const Color(0xff909090)),
-                      const SizedBox(
-                        height: 10,
+                    ),
+                    Positioned(
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(
+                          sigmaX: 80,
+                          sigmaY: 80,
+                        ),
+                        child: Container(),
                       ),
-                      _signUpButton(
-                          "Créez-en un.", const Color(0xff164276), context),
-                    ]),
-                  ))
-            ],
-          ),
-        ),
-      ),
+                    ),
+                    SizedBox(
+                        width: double.infinity,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 40),
+                          child: Column(children: [
+                            const SizedBox(
+                              height: 50,
+                            ),
+                            _logo(),
+                            _loginLabel(),
+                            const SizedBox(
+                              height: 150,
+                            ),
+                            _loginBtn(context),
+                            const SizedBox(
+                              height: 200,
+                            ),
+                            _signUpLabel(
+                                "Vous n'avez pas encore de compte Solid ?",
+                                const Color(0xff909090)),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            _signUpButton("Créez-en un.",
+                                const Color(0xff164276), context),
+                          ]),
+                        ))
+                  ],
+                ),
+              ),
+            ),
     );
   }
 
@@ -133,6 +140,9 @@ class _HomePageState extends State<HomePage> {
       ),
       child: TextButton(
         onPressed: () async {
+          setState(() {
+            loading = true;
+          });
           // Get issuer URI
           String _issuerUri = await getIssuer("https://solidcommunity.net/");
 
@@ -156,8 +166,40 @@ class _HomePageState extends State<HomePage> {
           Provider.of<VariableProvider>(context, listen: false)
               .updateAuthData(authData);
 
+          final prefs = AccessSharedpref(await SharedPreferences.getInstance());
+          final variableProvider =
+              Provider.of<VariableProvider>(context, listen: false);
+          final bool loadProfile = prefs.getBool();
+          final prevWebId = prefs.getId();
+          variableProvider.updateUserWebID(webId);
+
+          //Checking of Profile Data
+          print("Previous: $prevWebId CurrentID: $webId ${prevWebId == webId}");
+
+          if (prevWebId == webId && !loadProfile) {
+            final map = prefs.getProfileData();
+            variableProvider.email = map['email']!;
+            variableProvider.gender = map['gender']!;
+            variableProvider.birthDate = map['bday']!;
+            variableProvider.firstName = map['fname']!;
+            variableProvider.lastName = map['lname']!;
+            print("Checking for vars ${variableProvider.getFirstName}");
+          } else {
+            await prefs.setBool(false);
+            variableProvider.firstName = "";
+            variableProvider.lastName = "";
+            variableProvider.email = "";
+            variableProvider.gender = "";
+            variableProvider.birthDate = "";
+          }
+
+          loading = false;
           Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const ProfilePage()));
+            MaterialPageRoute(
+              builder: (context) =>
+                  loadProfile ? const ProfilePage() : const QRIntroScreen(),
+            ),
+          );
         },
         child: Text("Se connecter",
             style: GoogleFonts.josefinSans(

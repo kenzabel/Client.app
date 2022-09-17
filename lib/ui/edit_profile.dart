@@ -5,10 +5,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:interface_connection/apiwrapper/api_wrapper.dart';
-import 'package:interface_connection/providers/profile_provider.dart';
-import 'package:interface_connection/providers/variable_provider.dart';
+import '/apiwrapper/api_wrapper.dart';
+import '/providers/profile_provider.dart';
+import '/providers/variable_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UpdateData {
   late String newFirstName, newLastName, newEmail, newBirthDate, newGender;
@@ -125,10 +126,6 @@ class _EditProfileState extends State<EditProfile> {
     Map<String, dynamic> profileData = {
       "webId":
           Provider.of<VariableProvider>(context, listen: false).getUserWebID,
-      "username":
-          Provider.of<VariableProvider>(context, listen: false).getUsername,
-      "password":
-          Provider.of<VariableProvider>(context, listen: false).getPassword,
       "firstName": firstName,
       "lastName": lastName,
       "email": email,
@@ -141,11 +138,6 @@ class _EditProfileState extends State<EditProfile> {
       print("JSON Data For API : " + jsonData);
     }
 
-    var data = await CallAPI.apiMModule.postResponse(route, profileData, null);
-
-    if (kDebugMode) {
-      print("Message from api : ${data.toString()}");
-    }
     saveProfileData(firstName, lastName, email, birthDate, gender);
     UpdateData updateData = UpdateData();
     updateData.newFirstName = firstName;

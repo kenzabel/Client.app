@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:interface_connection/datafiles/categories_list.dart';
+import '/datafiles/categories_list.dart';
 
 class CategoriesProvider extends ChangeNotifier {
   bool isLoading = false;

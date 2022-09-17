@@ -6,11 +6,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:interface_connection/apiwrapper/api_wrapper.dart';
-import 'package:interface_connection/datafiles/categories_list.dart';
-import 'package:interface_connection/providers/categories_provider.dart';
-import 'package:interface_connection/providers/variable_provider.dart';
-import 'package:interface_connection/ui/qr_intro.dart';
+import '/apiwrapper/api_wrapper.dart';
+import '/datafiles/categories_list.dart';
+import '/providers/categories_provider.dart';
+import '/providers/variable_provider.dart';
+import '/ui/qr_intro.dart';
 import 'package:provider/provider.dart';
 
 class CategoriesPage extends StatefulWidget {
@@ -31,10 +31,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
     Map<String, dynamic> listOfSelectedCategories = {
       "webId":
           Provider.of<VariableProvider>(context, listen: false).getUserWebID,
-      "username":
-          Provider.of<VariableProvider>(context, listen: false).getUsername,
-      "password":
-          Provider.of<VariableProvider>(context, listen: false).getPassword,
       "categories": selectedCategories
     };
 
@@ -63,7 +59,8 @@ class _CategoriesPageState extends State<CategoriesPage> {
 
   @override
   Widget build(BuildContext context) {
-    CategoriesProvider provider = Provider.of<CategoriesProvider>(context);
+    CategoriesProvider provider =
+        Provider.of<CategoriesProvider>(context, listen: false);
     _mediaQueryData = MediaQuery.of(context);
 
     return Scaffold(
@@ -121,6 +118,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                             value: categories[index].isChecked,
                             onChanged: (value) {
                               provider.updateCheckBoxValue(index, value);
+                              setState(() {});
                             },
                           ),
                           Text(
@@ -160,9 +158,8 @@ class _CategoriesPageState extends State<CategoriesPage> {
                           fontSize: 16.0);
                     } else {
                       // saveToPod(provider);
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => const QRIntroScreen())
-                      );
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const QRIntroScreen()));
                     }
                   },
                   child: const Text(

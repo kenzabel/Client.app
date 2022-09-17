@@ -76,7 +76,7 @@ void showError(context) {
   );
 }
 
-void showDialogBox(context) {
+void showDialogBox(context, {String? txt = "Please wait..."}) {
   // flutter defined function
   showDialog(
     context: context,
@@ -85,12 +85,12 @@ void showDialogBox(context) {
       // return object of type Dialog
       return AlertDialog(
         content: Row(
-          children: const <Widget>[
-            CircularProgressIndicator(),
-            SizedBox(
+          children: <Widget>[
+            const CircularProgressIndicator(),
+            const SizedBox(
               width: 25.0,
             ),
-            Text("Please wait..."),
+            Text(txt!),
           ],
         ),
       );

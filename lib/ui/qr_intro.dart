@@ -3,10 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:interface_connection/providers/variable_provider.dart';
-import 'package:interface_connection/ui/homepage.dart';
-import 'package:interface_connection/ui/qr_scan_screen.dart';
-import 'package:interface_connection/ui/show_profile.dart';
+import '/providers/variable_provider.dart';
+import '/ui/homepage.dart';
+import '/ui/show_profile.dart';
 import 'package:provider/provider.dart';
 import 'package:solid_auth/solid_auth.dart';
 
@@ -21,12 +20,13 @@ class QRIntroScreen extends StatefulWidget {
 }
 
 class _QRIntroScreenState extends State<QRIntroScreen> {
-  String? qrCode;
+  String qrCode = "";
   bool data = false;
   bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
+    print("Does webid exists?" + Provider.of<VariableProvider>(context).email);
     return Scaffold(
       appBar: AppBar(
         title: const Text('BookMate'),
@@ -70,8 +70,8 @@ class _QRIntroScreenState extends State<QRIntroScreen> {
   _profileButton() {
     return IconButton(
         onPressed: () {
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const ShowProfile()));
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (_) => const ShowProfile()));
         },
         icon: const Icon(Icons.account_circle));
   }
@@ -94,7 +94,7 @@ class _QRIntroScreenState extends State<QRIntroScreen> {
   Future<void> scanQRCode() async {
     final barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
         "#ff6666", "Cancel", true, ScanMode.QR);
-
+    qrCode = barcodeScanRes;
     if (!mounted) return;
     setState(() {
       qrCode = barcodeScanRes;
@@ -115,8 +115,11 @@ class _QRIntroScreenState extends State<QRIntroScreen> {
           ? Navigator.of(context, rootNavigator: true).pop('dialog')
           : showDialogBox(context);
 
-      if (qrCode == "library_one") {
-        print("Yay!");
+      if (qrCode.isNotEmpty) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(qrCode)));
+        Provider.of<VariableProvider>(context, listen: false)
+            .updateUserWebID(qrCode);
         Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => const LibraryBooks()));
       } else {

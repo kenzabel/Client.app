@@ -22,7 +22,7 @@ class _RecommendedBooksState extends State<RecommendedBooks> {
   bool isLoading = true;
 
   Future<List<BooksData>> getBooksData() async {
-    final String response = await rootBundle.loadString('assets/result.json');
+    final String response = await rootBundle.loadString('assets/recommended.json');
     final data = await json.decode(response);
 
     for (Map i in data) {
@@ -49,7 +49,7 @@ class _RecommendedBooksState extends State<RecommendedBooks> {
         context: context,
         icon1: Icons.arrow_back_ios_new,
         route1: () => Navigator.of(context).pop(),
-        title: "Recomended Books",
+        title: "Recommended Books",
       ),
       body: isLoading
           ? const Center(
@@ -112,7 +112,7 @@ class _RecommendedBooksState extends State<RecommendedBooks> {
                                       booksDataList[index].title.toString()),
                                 ),
                                 child: Image.asset(
-                                    'images/beach.jpeg'), //just for testing, will fill with image later
+                                    'images/book.jpg'), //just for testing, will fill with image later
                               ),
                             ),
                           );

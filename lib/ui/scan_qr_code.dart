@@ -3,13 +3,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:interface_connection/ui/book_list.dart';
-import 'package:interface_connection/ui/qr_scan_screen.dart';
-import 'package:interface_connection/widgets/client_widgets.dart';
+import '/ui/book_list.dart';
+import '/ui/qr_scan_screen.dart';
+import '/widgets/client_widgets.dart';
 
 import '../model/BooksData.dart';
 
@@ -90,7 +88,7 @@ class _ScanQRCodeState extends State<ScanQRCode> {
         context: context,
         icon1: Icons.arrow_back_ios_new,
         route1: () => Navigator.of(context).pop(),
-        title: "Scan QRCode",
+        title: "BookMate",
         icon2: Icons.notifications,
         route2: () {},
       ),

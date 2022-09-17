@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:email_validator/email_validator.dart';
@@ -6,11 +5,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:interface_connection/apiwrapper/api_wrapper.dart';
-import 'package:interface_connection/providers/profile_provider.dart';
-import 'package:interface_connection/providers/variable_provider.dart';
-import 'package:interface_connection/ui/categories.dart';
+import '/apiwrapper/api_wrapper.dart';
+import '/feateure/access_sharedpref.dart';
+import '/providers/profile_provider.dart';
+import '/providers/variable_provider.dart';
+import '/ui/categories.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -105,6 +106,7 @@ class _ProfilePageState extends State<ProfilePage> {
       // After checking all errors if everything is okay then we save this data.
 
       sendProfileData(firstName, lastName, email, birthDate, gender);
+
       Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => const CategoriesPage()));
     }
@@ -115,10 +117,6 @@ class _ProfilePageState extends State<ProfilePage> {
     Map<String, dynamic> profileData = {
       "webId":
           Provider.of<VariableProvider>(context, listen: false).getUserWebID,
-      "username":
-          Provider.of<VariableProvider>(context, listen: false).getUsername,
-      "password":
-          Provider.of<VariableProvider>(context, listen: false).getPassword,
       "firstName": firstName,
       "lastName": lastName,
       "email": email,
@@ -126,17 +124,18 @@ class _ProfilePageState extends State<ProfilePage> {
       "gender": gender
     };
 
-    String jsonData = jsonEncode(profileData);
-    if (kDebugMode) {
-      print("JSON Data For API : " + jsonData);
-    }
+    final prefs = AccessSharedpref(await SharedPreferences.getInstance());
 
-    var data = await CallAPI.apiMModule.postResponse(route, profileData, null);
-    // await DefaultCacheManager().emptyCache();
+    await prefs.setBool(false);
+    await prefs.setId(
+        Provider.of<VariableProvider>(context, listen: false).getUserWebID);
+    await prefs.storeData(
+        fname: firstName,
+        lname: lastName,
+        email: email,
+        bDay: birthDate,
+        gender: gender);
 
-    if (kDebugMode) {
-      print("Message from api : ${data.toString()}");
-    }
     saveProfileData(firstName, lastName, email, birthDate, gender);
   }
 
@@ -165,11 +164,20 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  void setControllers() async {
+    final map = AccessSharedpref(await SharedPreferences.getInstance())
+        .getProfileData();
+    _firstNameController.text = map['fname']!;
+    _lastNameController.text = map['lname']!;
+    _birthDateController.text = map['bday']!;
+    _emailController.text = map['email']!;
+  }
+
   @override
   void initState() {
-    // implement initState
     super.initState();
     CallAPI.init();
+    setControllers();
   }
 
   @override
@@ -194,7 +202,6 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         title: const Text('Edit Profile Page'),
       ),
-
       body: Center(
         child: SingleChildScrollView(
           child: Column(
@@ -363,12 +370,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   primary: Colors.blue,
                   onPrimary: Colors.white,
                 ),
-                // onPressed: () => checkValidations(provider),
-                onPressed: (){
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const CategoriesPage())
-                  );
-                },
+                onPressed: () => checkValidations(provider),
+                // onPressed: () {
+                //   Navigator.of(context).push(MaterialPageRoute(
+                //       builder: (context) => const CategoriesPage()));
+                // },
                 child: const Text(
                   'Save',
                   style: TextStyle(fontSize: 15),

@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:interface_connection/ui/homepage.dart';
+import '/ui/homepage.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -48,7 +48,7 @@ class _IntroScreenState extends State<IntroScreen> {
           'Done',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        onDone: () async{
+        onDone: () async {
           SharedPreferences preferences = await SharedPreferences.getInstance();
           preferences.setBool('showHomePage', true);
           goHome(context);
@@ -64,7 +64,7 @@ class _IntroScreenState extends State<IntroScreen> {
         animationDuration: 200, // augmenter = ralentir
         isProgressTap:
             true, //false = no action no animation no switching page on click dot just in scrolling
-        isProgress: true, // if false no dots
+        isProgress: true,
         freeze: false, // if true no switching just with next or back
         onChange: (index) {
           if (kDebugMode) {

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:interface_connection/providers/variable_provider.dart';
-import 'package:interface_connection/ui/edit_profile.dart';
+import '/feateure/access_sharedpref.dart';
+import '/providers/variable_provider.dart';
+import '/ui/edit_profile.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ShowProfile extends StatefulWidget {
   const ShowProfile({Key? key}) : super(key: key);
@@ -21,7 +23,9 @@ class _ShowProfileState extends State<ShowProfile> {
   late MediaQueryData _mediaQueryData;
 
   editProfile() async {
-    UpdateData result = await Navigator.of(context).push(
+    UpdateData result = UpdateData();
+
+    result = await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => EditProfile(
           firstName: _firstNameController.text,
@@ -38,6 +42,14 @@ class _ShowProfileState extends State<ShowProfile> {
     _emailController.text = result.newEmail;
     _birthDateController.text = result.newBirthDate;
     _genderController.text = result.newGender;
+
+    final sp = AccessSharedpref(await SharedPreferences.getInstance());
+    sp.storeData(
+        fname: result.newFirstName,
+        lname: result.newLastName,
+        email: result.newEmail,
+        bDay: result.newBirthDate,
+        gender: result.newGender);
   }
 
   @override
@@ -60,7 +72,8 @@ class _ShowProfileState extends State<ShowProfile> {
   @override
   Widget build(BuildContext context) {
     _mediaQueryData = MediaQuery.of(context);
-    VariableProvider provider = Provider.of<VariableProvider>(context);
+    VariableProvider provider =
+        Provider.of<VariableProvider>(context, listen: false);
     _firstNameController.text = provider.getFirstName;
     _lastNameController.text = provider.getLastName;
     _emailController.text = provider.getEmail;
