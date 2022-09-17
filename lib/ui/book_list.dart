@@ -22,14 +22,6 @@ class _LibraryBooksState extends State<LibraryBooks> {
   List<BooksData> booksDataList = [];
   List<dynamic> chk = [];
   Future<List<String>> getBooksData() async {
-    // final String response = await rootBundle.loadString('assets/result.json');
-    // final data = await json.decode(response);
-
-    // for (Map i in data) {
-    //   booksDataList.add(BooksData.fromJson(i));
-    //   chk.add({"isChecked": false});
-    // }
-
     //NewCode
     String bookRoute = 'booksList';
     print("getBookDAta"); //TODO remove print()
@@ -102,32 +94,9 @@ class _LibraryBooksState extends State<LibraryBooks> {
                                     padding: const EdgeInsets.all(4.0),
                                     child: Text(bookName),
                                   ),
-                                  // Padding(
-                                  //   padding: const EdgeInsets.all(4.0),
-                                  //   child: Text('Author : $author'),
-                                  // ),
-                                  // Padding(
-                                  //   padding: const EdgeInsets.all(4.0),
-                                  //   child: Text(
-                                  //     'Description : $description',
-                                  //     overflow: TextOverflow.ellipsis,
-                                  //   ),
-                                  // ),
                                 ],
                               ),
                             ),
-                            // ? Checkbox(
-                            //     side: const BorderSide(
-                            //       color: Colors.black,
-                            //     ),
-                            //     value: chk[index]['isChecked'],
-                            //     onChanged: (v) {
-                            //       chk[index]["isChecked"]
-                            //           ? chk[index]["isChecked"] = false
-                            //           : chk[index]["isChecked"] = true;
-                            //       setState(() {});
-                            //     })
-                            // :
                             IconButton(
                               onPressed: () {
                                 chk[index]["isChecked"]
@@ -145,15 +114,15 @@ class _LibraryBooksState extends State<LibraryBooks> {
                         ),
                       );
                     });
-              } else {
+              } else if (snapshot.hasError) {
                 return const Center(
-                  child: Text('Fetching Data'),
+                  child: Text('It\' really a error now :c'),
                 );
+              } else {
+                return const Center(child: CircularProgressIndicator());
               }
             } else {
-              return const Center(
-                child: Text('Something went wrong!'),
-              );
+              return const Center(child: CircularProgressIndicator());
             }
           }),
     );
