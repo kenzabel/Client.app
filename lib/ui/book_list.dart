@@ -26,14 +26,14 @@ class _LibraryBooksState extends State<LibraryBooks> {
     String bookRoute = 'booksList';
     print("getBookDAta"); //TODO remove print()
     Map<String, dynamic> bookData = {
-      "webId": //"https://aidayahiaoui201.solidcommunity.net/profile/card#me",
+      "webId":
           Provider.of<VariableProvider>(context, listen: false).getUserWebID,
     };
-    print(bookData['webId']);
 
     String jsonData = jsonEncode(bookData);
     var data2 =
         await CallAPI.apiMModule.postResponse(bookRoute, jsonData, null);
+
     var urls = data2['@graph'][0]['voc:save'];
     //Left for checking
 

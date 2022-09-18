@@ -20,9 +20,11 @@ class _RecommendedBooksState extends State<RecommendedBooks> {
   List<BooksData> booksRepo = [];
   List<dynamic> chk = [];
   bool isLoading = true;
+  final _ctrlr = TextEditingController();
 
   Future<List<BooksData>> getBooksData() async {
-    final String response = await rootBundle.loadString('assets/recommended.json');
+    final String response =
+        await rootBundle.loadString('assets/recommended.json');
     final data = await json.decode(response);
 
     for (Map i in data) {
@@ -55,74 +57,53 @@ class _RecommendedBooksState extends State<RecommendedBooks> {
           ? const Center(
               child: CircularProgressIndicator(),
             )
-          : Container(
-              height: screenHeight(context),
-              width: screenWidth(context),
-              child: ListView(
-                children: [
-                  Container(
-                    height: screenHeight(context) * 0.20,
-                    child: ListView.builder(
-                      primary: false,
-                      scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      itemCount: booksDataList.length,
-                      itemBuilder: (context, index) {
-                        return productCategory(
-                            context: context,
-                            title: booksDataList[index].genre,
-                            img: 'images/book.jpg');
-                      },
-                    ),
-                  ),
-                  Text(
-                    "You may also like",
-                    style: GoogleFonts.inter(
-                        fontSize: 23,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black),
-                  ),
-                  YMargin(10),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SizedBox(
-                      child: GridView.builder(
-                        primary: false,
-                        shrinkWrap: true,
-                        itemCount: booksDataList.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount:
-                                (orientation == Orientation.portrait) ? 2 : 3),
-                        itemBuilder: (BuildContext context, int index) {
-                          return InkWell(
-                            onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => BooksDetails(
-                                        title: booksDataList[index].title,
-                                        author: booksDataList[index].author,
-                                        description:
-                                            booksDataList[index].abstract,
-                                      )));
-                            },
-                            child: Card(
-                              child: GridTile(
-                                footer: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                      booksDataList[index].title.toString()),
-                                ),
-                                child: Image.asset(
-                                    'images/book.jpg'), //just for testing, will fill with image later
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          : _textField(),
     );
+  }
+
+  Widget _textField() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Text(
+          "Enter your Recommendation System",
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          margin: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Colors.black12,
+          ),
+          child: TextField(
+            controller: _ctrlr,
+            decoration: const InputDecoration(hintText: "Enter URL"),
+            maxLines: 1,
+          ),
+        ),
+        TextButton(
+            onPressed: _addSystem,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.blue.shade400,
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+              child: const Text(
+                "Get recommandations",
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            )),
+      ],
+    );
+  }
+
+  void _addSystem() {
+    //TODO add the functionality
   }
 }

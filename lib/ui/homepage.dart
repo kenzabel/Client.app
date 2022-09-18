@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:client_app/ui/book_list.dart';
+import 'package:client_app/ui/recommended.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '/feateure/access_sharedpref.dart';
@@ -66,7 +68,9 @@ class _HomePageState extends State<HomePage> {
                           sigmaX: 80,
                           sigmaY: 80,
                         ),
-                        child: Container(),
+                        child: Container(
+                          height: MediaQuery.of(context).size.height,
+                        ),
                       ),
                     ),
                     SizedBox(

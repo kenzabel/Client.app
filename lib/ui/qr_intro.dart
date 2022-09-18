@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:client_app/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -32,6 +33,7 @@ class _QRIntroScreenState extends State<QRIntroScreen> {
         title: const Text('BookMate'),
         actions: [_profileButton(), _logoutButton(context)],
       ),
+      drawer: QrDrawer(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
