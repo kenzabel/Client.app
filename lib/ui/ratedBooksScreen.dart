@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '/controllers/userCont.dart';
 import '/model/infosbooks.dart';
 import '/model/ratedbooks.dart';
+import 'book_details.dart';
 
 class RatedBooksScreen extends StatefulWidget {
   final InfosBook infosBook;
@@ -22,7 +23,9 @@ class _RatedBooksState extends State<RatedBooksScreen> {
     var ratedBooks = data.split('},');
 
     return Scaffold(
-        backgroundColor: const Color(0xffdee2fe), body: listBooks(ratedBooks));
+        appBar: AppBar(title: const Text("Rated Books")),
+        backgroundColor: const Color(0xffdee2fe),
+        body: listBooks(ratedBooks));
   }
 
   Widget listBooks(List<String> books) {
@@ -36,71 +39,8 @@ class _RatedBooksState extends State<RatedBooksScreen> {
           var genre = elem[3].substring(6, elem[3].length);
           if (genre.split('http').length > 1) genre = genre.split('/')[4];
           var abstract = elem[5].substring(10, elem[5].length);
-          return Card(
-            elevation: 5.0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Row(
-                          children: [
-                            Text(
-                              'Title :',
-                              style: TextStyle(
-                                fontFamily: "Montserrat",
-                                color: Colors.black87,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
-                              ),
-                            ),
-                            Text(title)
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Row(
-                          children: [
-                            Text(
-                              'Author :',
-                              style: TextStyle(
-                                fontFamily: "Montserrat",
-                                color: Colors.black87,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
-                              ),
-                            ),
-                            Text(author)
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Text(
-                          'Description :',
-                          style: TextStyle(
-                            fontFamily: "Montserrat",
-                            color: Colors.black87,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Expanded(child: Text(abstract))),
-                    ],
-                  ),
-                ), //Text(ratingValue[index])
-              ],
-            ),
-          );
+
+          return _getCardWithButton(title, author, genre, abstract);
         });
   }
 
@@ -134,6 +74,89 @@ class _RatedBooksState extends State<RatedBooksScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Card _getCard(title, author, genre, abstract) {
+    return Card(
+      elevation: 5.0,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Title :',
+                        style: TextStyle(
+                          fontFamily: "Montserrat",
+                          color: Colors.black87,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
+                      Expanded(child: Text(title))
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Row(
+                    children: [
+                      const Text(
+                        'Author :',
+                        style: TextStyle(
+                          fontFamily: "Montserrat",
+                          color: Colors.black87,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
+                      Text(author)
+                    ],
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.all(4.0),
+                  child: Text(
+                    'Description :',
+                    style: TextStyle(
+                      fontFamily: "Montserrat",
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+                Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Expanded(child: Text(abstract))),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _getCardWithButton(title, author, genre, abstract) {
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => BooksDetails(
+                  title: title,
+                  author: author,
+                  description: abstract,
+                )));
+      },
+      child: _getCard(title, author, genre, abstract),
     );
   }
 }

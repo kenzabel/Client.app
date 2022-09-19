@@ -14,14 +14,26 @@ import '/model/savedbooks.dart';
 import '/model/userInterest.dart';
 
 class QrDrawer extends StatelessWidget {
+  final String webId;
+  QrDrawer(this.webId, {Key? key}) : super(key: key);
   final UserCont userCont = UserCont();
   @override
   Widget build(BuildContext context) {
+    final webIDPattern = RegExp(r'(https:\/\/)?([a-zA-Z0-9]*)\.solid');
+    final matchwebId = webIDPattern.firstMatch(webId);
+    print("from regex" + (matchwebId?.group(2) ?? ""));
+    final webIdExtracted =
+        "https://${matchwebId!.group(2)!}.solidcommunity.net";
+    print(webIdExtracted);
+    // webId = webId.
     return Drawer(
         child: ListView(
       children: [
         DrawerHeader(
-          child: Text("Select Option"),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Image.asset("images/BookMate.png"),
+          ),
         ),
         ListTile(
           leading: const Icon(Icons.person),
@@ -30,9 +42,7 @@ class QrDrawer extends StatelessWidget {
             style: TextStyle(fontSize: 20),
           ),
           onTap: () async {
-            Map<String, dynamic> json = {
-              "webId": "https://user201.solidcommunity.net"
-            };
+            Map<String, dynamic> json = {"webId": webIdExtracted};
             User user = await userCont.postUser(json);
             Navigator.push(
                 context,
@@ -47,9 +57,7 @@ class QrDrawer extends StatelessWidget {
             style: TextStyle(fontSize: 20),
           ),
           onTap: () async {
-            Map<String, dynamic> json = {
-              "webId": "https://user201.solidcommunity.net"
-            };
+            Map<String, dynamic> json = {"webId": webIdExtracted};
             UsereSavedBooks usereSavedBooks =
                 await userCont.getSavedBooks(json);
             var data = usereSavedBooks.savedBooks;
@@ -73,9 +81,7 @@ class QrDrawer extends StatelessWidget {
             style: TextStyle(fontSize: 20),
           ),
           onTap: () async {
-            Map<String, dynamic> json = {
-              "webId": "https://user201.solidcommunity.net"
-            };
+            Map<String, dynamic> json = {"webId": webIdExtracted};
             UserRatedBooks userRatedBooks = await userCont.getRatedBooks(json);
             var data = userRatedBooks.ratedBooks;
             data = data.substring(1, data.length - 1);
@@ -109,9 +115,7 @@ class QrDrawer extends StatelessWidget {
             style: TextStyle(fontSize: 20),
           ),
           onTap: () async {
-            Map<String, dynamic> json = {
-              "webId": "https://user201.solidcommunity.net"
-            };
+            Map<String, dynamic> json = {"webId": webIdExtracted};
             UserInterest userInterest = await userCont.postGenre(json);
             Navigator.push(
                 context,

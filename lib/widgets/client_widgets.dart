@@ -119,51 +119,6 @@ Widget detailCard({
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.all(0),
-                child: Container(
-                  height: screenHeight(context) * 0.25,
-                  width: screenWidth(context),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: kPrimaryColor),
-                      image: DecorationImage(
-                        image: AssetImage(img!),
-                        fit: BoxFit.fill,
-                      )),
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8, top: 5),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [],
-                    ),
-                  ),
-                ],
-              ),
-              const YMargin(7),
-              RatingBar.builder(
-                initialRating: 3,
-                minRating: 1,
-                direction: Axis.horizontal,
-                allowHalfRating: true,
-                itemCount: 5,
-                itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-                itemBuilder: (context, _) => const Icon(
-                  Icons.star,
-                  color: Colors.amber,
-                ),
-                onRatingUpdate: (rating) {
-                  print(rating);
-                },
-              ),
-              Divider(),
-              Padding(
                 padding: const EdgeInsets.all(0.0),
                 child: Container(
                     padding: const EdgeInsets.all(0),
@@ -250,6 +205,26 @@ Widget detailCard({
                               textAlign: TextAlign.justify,
                               // textDirection: TextDirection.ltr,
                             ),
+                          ),
+                        ),
+                        Divider(),
+                        Center(
+                          child: RatingBar.builder(
+                            initialRating: 3,
+                            minRating: 1,
+                            direction: Axis.horizontal,
+                            allowHalfRating: true,
+                            itemCount: 5,
+                            itemSize: 20,
+                            itemPadding:
+                                const EdgeInsets.symmetric(horizontal: 4.0),
+                            itemBuilder: (context, _) => const Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                            ),
+                            onRatingUpdate: (rating) {
+                              print(rating);
+                            },
                           ),
                         ),
                       ],

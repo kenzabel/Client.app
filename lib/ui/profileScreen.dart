@@ -6,7 +6,7 @@ import '/model/infoPers.dart';
 
 class ProfileScreen extends StatefulWidget {
   final User user;
-  const ProfileScreen({required this.user});
+  ProfileScreen({required this.user});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -86,8 +86,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Icons.person, "First Name", widget.user.firstName),
                     listProfile(
                         Icons.person, "Last Name", widget.user.lastName),
+                    listProfile(Icons.mail, "e-mail", widget.user.email),
                     listProfile(
-                        Icons.book, "Book case name", widget.user.BookCaseName),
+                        Icons.calendar_month, "birthday", widget.user.birthday),
                   ],
                 ),
               ),

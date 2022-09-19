@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:client_app/ui/book_details.dart';
 import 'package:client_app/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -27,13 +28,12 @@ class _QRIntroScreenState extends State<QRIntroScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("Does webid exists?" + Provider.of<VariableProvider>(context).email);
     return Scaffold(
       appBar: AppBar(
         title: const Text('BookMate'),
-        actions: [_profileButton(), _logoutButton(context)],
+        actions: [_logoutButton(context)],
       ),
-      drawer: QrDrawer(),
+      drawer: QrDrawer(Provider.of<VariableProvider>(context).getUserWebID),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -58,24 +58,15 @@ class _QRIntroScreenState extends State<QRIntroScreen> {
                   onPrimary: Colors.white,
                 ),
                 onPressed: () {
-                  scanQRCode();
-                  // Navigator.of(context).push(MaterialPageRoute(
-                  //     builder: (context) => const QRScanScreen()));
+                  // scanQRCode();
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const LibraryBooks()));
                 },
                 child: const Icon(Icons.camera_alt)),
           ],
         ),
       ),
     );
-  }
-
-  _profileButton() {
-    return IconButton(
-        onPressed: () {
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (_) => const ShowProfile()));
-        },
-        icon: const Icon(Icons.account_circle));
   }
 
   _logoutButton(BuildContext context) {

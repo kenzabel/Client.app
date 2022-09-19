@@ -1,19 +1,21 @@
 class User {
-  final String firstName, lastName, BookCaseName;
-  User(this.firstName, this.lastName, this.BookCaseName);
+  final String firstName, lastName, email, birthday;
+  User(this.firstName, this.lastName, this.email, this.birthday);
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       json["firstName"],
       json["lastName"],
-      json["BookCaseName"],
+      json["email"],
+      json["birthday"],
     );
   }
   toJson(User user) {
     return {
       "firstName": user.firstName,
       "lastName": user.lastName,
-      "BookCaseName": user.BookCaseName,
+      "email": user.email,
+      "birthday": user.birthday,
     };
   }
 }

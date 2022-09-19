@@ -28,11 +28,11 @@ class UserCont {
   Future<User> postUser(Map<String, dynamic> json) async {
     Response response;
     var dio = Dio();
-    response = await dio.post(
-        "https://libtoolapi.herokuapp.com/users/getInfoprovider",
+    response = await dio.post("https://bookmateapi.herokuapp.com/users/getInfo",
         data: json);
     if (response.statusCode == 200) {
       Map<String, dynamic> res = (response.data) as Map<String, dynamic>;
+      print("inside fucn " + res.toString());
       User user = User.fromJson(res);
       print(user);
       // then parse the JSON.
@@ -104,6 +104,26 @@ class UserCont {
       InfosBook infosBook = InfosBook.fromJson(res);
       // then parse the JSON.
       return infosBook;
+    } else {
+      // then throw an exception.
+      throw Exception('Failed to post.');
+    }
+  }
+
+  Future<UsereRcommendations> postRecommendations(
+      Map<String, dynamic> json) async {
+    Response response;
+    var dio = Dio();
+    response = await dio.post(
+        "https://srlods.herokuapp.com/users/recommendationsUser",
+        data: json);
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> res = (response.data) as Map<String, dynamic>;
+      UsereRcommendations usereRcommendations =
+          UsereRcommendations.fromJson(res);
+      // then parse the JSON.
+      return usereRcommendations;
     } else {
       // then throw an exception.
       throw Exception('Failed to post.');

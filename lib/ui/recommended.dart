@@ -1,10 +1,14 @@
 import 'dart:convert';
 
+import 'package:client_app/ui/recommendedBooks.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../controllers/userCont.dart';
 import '../model/BooksData.dart';
+import '../model/infosbooks.dart';
+import '../model/recommendations.dart';
 import '../widgets/client_widgets.dart';
 import 'book_details.dart';
 
@@ -103,7 +107,29 @@ class _RecommendedBooksState extends State<RecommendedBooks> {
     );
   }
 
-  void _addSystem() {
-    //TODO add the functionality
+  void _addSystem() async {
+    Map<String, dynamic> json = {
+      "webId": "https://aidayahiaoui201.solidcommunity.net"
+    };
+    UsereRcommendations usereRcommendations =
+        await UserCont().postRecommendations(json);
+    var data = usereRcommendations.recommendedBooks;
+    var recommendations = data.split(',');
+    var score = '';
+    for (var i = 0; i < recommendations.length; i++) {
+      var element = recommendations[i].split('score');
+      recommendations[i] = element[0];
+      score = score + element[1] + ',';
+    }
+    score = score.substring(0, score.length - 1);
+    var scores = score.split(',');
+    Map<String, dynamic> json2 = {"uris": recommendations.toString()};
+    InfosBook infosBook = await UserCont().getInfosBook(json2);
+
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                RecommendedBooksScreen(infosBook: infosBook)));
   }
 }

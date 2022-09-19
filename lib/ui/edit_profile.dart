@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UpdateData {
-  late String newFirstName, newLastName, newEmail, newBirthDate, newGender;
+  late String newFirstName, newLastName, newEmail, newBirthDate;
 }
 
 class EditProfile extends StatefulWidget {
@@ -22,14 +22,12 @@ class EditProfile extends StatefulWidget {
     required this.lastName,
     required this.email,
     required this.birthDate,
-    required this.gender,
   }) : super(key: key);
 
   final String firstName;
   final String lastName;
   final String email;
   final String birthDate;
-  final String gender;
 
   @override
   State<EditProfile> createState() => _EditProfileState();
@@ -47,7 +45,6 @@ class _EditProfileState extends State<EditProfile> {
     _lastNameController.text = widget.lastName;
     _emailController.text = widget.email;
     _birthDateController.text = widget.birthDate;
-    Provider.of<ProfileProvider>(context, listen: false).gender = widget.gender;
   }
 
   void checkValidations(ProfileProvider provider) {
@@ -55,7 +52,6 @@ class _EditProfileState extends State<EditProfile> {
     String lastName = _lastNameController.text;
     String email = _emailController.text;
     String birthDate = _birthDateController.text;
-    String gender = provider.getGender ?? "";
 
     if (firstName.isEmpty) {
       Fluttertoast.showToast(
@@ -106,22 +102,12 @@ class _EditProfileState extends State<EditProfile> {
           textColor: Colors.white,
           fontSize: 16.0);
       return;
-    } else if (gender == "") {
-      Fluttertoast.showToast(
-          msg: "Select Gender",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black45,
-          textColor: Colors.white,
-          fontSize: 16.0);
-      return;
     } else {
-      sendProfileData(firstName, lastName, email, birthDate, gender);
+      sendProfileData(firstName, lastName, email, birthDate);
     }
   }
 
-  sendProfileData(firstName, lastName, email, birthDate, gender) async {
+  sendProfileData(firstName, lastName, email, birthDate) async {
     String route = "profile";
     Map<String, dynamic> profileData = {
       "webId":
@@ -130,7 +116,7 @@ class _EditProfileState extends State<EditProfile> {
       "lastName": lastName,
       "email": email,
       "birthDate": birthDate,
-      "gender": gender
+      "gender": ""
     };
 
     String jsonData = jsonEncode(profileData);
@@ -138,18 +124,17 @@ class _EditProfileState extends State<EditProfile> {
       print("JSON Data For API : " + jsonData);
     }
 
-    saveProfileData(firstName, lastName, email, birthDate, gender);
+    saveProfileData(firstName, lastName, email, birthDate);
     UpdateData updateData = UpdateData();
     updateData.newFirstName = firstName;
     updateData.newLastName = lastName;
     updateData.newEmail = email;
     updateData.newBirthDate = birthDate;
-    updateData.newGender = gender;
 
     Navigator.pop(context, updateData);
   }
 
-  void saveProfileData(firstName, lastName, email, birthDate, gender) {
+  void saveProfileData(firstName, lastName, email, birthDate) {
     Provider.of<VariableProvider>(context, listen: false)
         .updateFirstName(firstName);
     Provider.of<VariableProvider>(context, listen: false)
@@ -157,7 +142,6 @@ class _EditProfileState extends State<EditProfile> {
     Provider.of<VariableProvider>(context, listen: false).updateEmail(email);
     Provider.of<VariableProvider>(context, listen: false)
         .updateBirthDate(birthDate);
-    Provider.of<VariableProvider>(context, listen: false).updateGender(gender);
   }
 
   void openDatePicker(ProfileProvider provider) async {
@@ -309,46 +293,6 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
               const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
-                child: Row(
-                  children: [
-                    const Text(
-                      'Gender : ',
-                      style: TextStyle(fontSize: 15),
-                    ),
-                    Flexible(
-                      fit: FlexFit.loose,
-                      child: RadioListTile(
-                        title: const Text('Male'),
-                        value: "Male",
-                        groupValue: provider.getGender,
-                        onChanged: (value) {
-                          provider.updateGender(value.toString());
-
-                          if (kDebugMode) {
-                            print("Gender : " + provider.getGender!);
-                          }
-                        },
-                      ),
-                    ),
-                    Flexible(
-                      fit: FlexFit.loose,
-                      child: RadioListTile(
-                        title: const Text('Female'),
-                        value: "Female",
-                        groupValue: provider.getGender,
-                        onChanged: (value) {
-                          provider.updateGender(value.toString());
-                          if (kDebugMode) {
-                            print("Gender : " + provider.getGender!);
-                          }
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
               const SizedBox(height: 20),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(

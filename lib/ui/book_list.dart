@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import '/ui/recommended.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +9,7 @@ import '../apiwrapper/api_wrapper.dart';
 import '../model/BooksData.dart';
 import '../providers/variable_provider.dart';
 import '../widgets/client_widgets.dart';
+import 'book_details.dart';
 
 class LibraryBooks extends StatefulWidget {
   const LibraryBooks({super.key});
@@ -21,27 +23,43 @@ class _LibraryBooksState extends State<LibraryBooks> {
   List<String> booksUri = [];
   List<BooksData> booksDataList = [];
   List<dynamic> chk = [];
-  Future<List<String>> getBooksData() async {
+  Future<List<BooksData>> getBooksData() async {
     //NewCode
-    String bookRoute = 'booksList';
-    print("getBookDAta"); //TODO remove print()
-    Map<String, dynamic> bookData = {
-      "webId":
-          Provider.of<VariableProvider>(context, listen: false).getUserWebID,
-    };
+    // String bookRoute = 'booksList';
+    // print("getBookDAta"); //TODO remove print()
+    // Map<String, dynamic> bookData = {
+    //   "webId":
+    //       Provider.of<VariableProvider>(context, listen: false).getUserWebID,
+    // };
 
-    String jsonData = jsonEncode(bookData);
-    var data2 =
-        await CallAPI.apiMModule.postResponse(bookRoute, jsonData, null);
+    // String jsonData = jsonEncode(bookData);
+    // var data2 =
+    //     await CallAPI.apiMModule.postResponse(bookRoute, jsonData, null);
 
-    var urls = data2['@graph'][0]['voc:save'];
-    //Left for checking
+    // var urls = data2['@graph'][0]['voc:save'];
+    // //Left for checking
 
-    for (var each in urls) {
-      booksUri.add(each['@id']);
+    // for (var each in urls) {
+    //   booksUri.add(each['@id']);
+    //   chk.add({"isChecked": false});
+    // }
+
+    Dio dio = Dio();
+    var response = await dio.get(
+      'https://solid-apii.herokuapp.com/bookinfo',
+    );
+    for (var tmp in response.data) {
+      BooksData eachBookInfo = BooksData(
+          author: tmp['authors'],
+          title: tmp['title'],
+          abstract: tmp["abstract"],
+          isFavorite: false,
+          genre: "",
+          uri: tmp['book']);
+      booksDataList.add(eachBookInfo);
       chk.add({"isChecked": false});
     }
-    return booksUri;
+    return booksDataList;
   }
 
   @override
@@ -71,13 +89,12 @@ class _LibraryBooksState extends State<LibraryBooks> {
             if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.hasData) {
                 return ListView.builder(
-                    itemCount: booksUri.length,
+                    itemCount: booksDataList.length,
                     itemBuilder: (context, index) {
-                      bool isChecked = false;
-                      bool checkBox = false;
-                      String? bookName = booksUri[index];
-                      String? author = "Author"; //booksDataList[index].author;
-                      String? description = "Description";
+                      bool checkBox = chk[index]["isChecked"];
+                      String? bookName = booksDataList[index].title;
+                      String? author = booksDataList[index].author;
+                      String? description = booksDataList[index].abstract;
                       // booksDataList[index].abstract;
                       return Card(
                         elevation: 5.0,
@@ -85,18 +102,8 @@ class _LibraryBooksState extends State<LibraryBooks> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Text(bookName),
-                                  ),
-                                ],
-                              ),
-                            ),
+                                child: _getListCard(
+                                    bookName!, author!, description!)),
                             IconButton(
                               onPressed: () {
                                 chk[index]["isChecked"]
@@ -125,6 +132,51 @@ class _LibraryBooksState extends State<LibraryBooks> {
               return const Center(child: CircularProgressIndicator());
             }
           }),
+    );
+  }
+
+  InkWell _getListCard(
+    String bookName,
+    String author,
+    String description,
+  ) {
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => BooksDetails(
+                  title: bookName,
+                  author: author,
+                  description: description,
+                )));
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Text('Title : $bookName'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Text('Author : $author'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Text(
+                    'Description : $description',
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -18,7 +18,7 @@ class _ShowProfileState extends State<ShowProfile> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _birthDateController = TextEditingController();
-  final TextEditingController _genderController = TextEditingController();
+  // final TextEditingController _genderController = TextEditingController();
 
   late MediaQueryData _mediaQueryData;
 
@@ -32,7 +32,7 @@ class _ShowProfileState extends State<ShowProfile> {
           lastName: _lastNameController.text,
           email: _emailController.text,
           birthDate: _birthDateController.text,
-          gender: _genderController.text,
+          // gender: _genderController.text,
         ),
       ),
     );
@@ -41,7 +41,7 @@ class _ShowProfileState extends State<ShowProfile> {
     _lastNameController.text = result.newLastName;
     _emailController.text = result.newEmail;
     _birthDateController.text = result.newBirthDate;
-    _genderController.text = result.newGender;
+    // _genderController.text = result.newGender;
 
     final sp = AccessSharedpref(await SharedPreferences.getInstance());
     sp.storeData(
@@ -49,7 +49,7 @@ class _ShowProfileState extends State<ShowProfile> {
         lname: result.newLastName,
         email: result.newEmail,
         bDay: result.newBirthDate,
-        gender: result.newGender);
+        gender: "");
   }
 
   @override
@@ -65,7 +65,7 @@ class _ShowProfileState extends State<ShowProfile> {
     _lastNameController.dispose();
     _emailController.dispose();
     _birthDateController.dispose();
-    _genderController.dispose();
+    // _genderController.dispose();
     super.dispose();
   }
 
@@ -78,7 +78,7 @@ class _ShowProfileState extends State<ShowProfile> {
     _lastNameController.text = provider.getLastName;
     _emailController.text = provider.getEmail;
     _birthDateController.text = provider.getBirthDate;
-    _genderController.text = provider.getGender;
+    // _genderController.text = provider.getGender;
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -181,27 +181,6 @@ class _ShowProfileState extends State<ShowProfile> {
                 ),
               ),
               const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
-                child: TextField(
-                  enabled: false,
-                  controller: _genderController,
-                  cursorColor: Colors.blue,
-                  style: const TextStyle(color: Colors.black),
-                  decoration: const InputDecoration(
-                      focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.blue, width: 2.0)),
-                      enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.blue, width: 2.0)),
-                      border: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.blue, width: 2.0)),
-                      labelText: 'Gender',
-                      labelStyle: TextStyle(color: Colors.black)),
-                ),
-              ),
               const SizedBox(height: 20),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(

@@ -79,10 +79,10 @@ class _HomePageState extends State<HomePage> {
                           padding: const EdgeInsets.symmetric(horizontal: 40),
                           child: Column(children: [
                             const SizedBox(
-                              height: 50,
+                              height: 70,
                             ),
                             _logo(),
-                            _loginLabel(),
+                            // _loginLabel(),
                             const SizedBox(
                               height: 150,
                             ),
@@ -115,9 +115,12 @@ class _HomePageState extends State<HomePage> {
             Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => const ScanQRCode()));
           },
-          child: Image.asset('images/book.jpg'),
+          child: Image.asset(
+            'images/BookMate.png',
+            fit: BoxFit.cover,
+          ),
         ),
-        height: 80,
+        height: 120,
       ),
     );
   }
